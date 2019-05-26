@@ -54,26 +54,33 @@ server.get('/api/zoos/:id', (req, res) => {
 //insert
 server.post('/api/zoos', (req, res) => {
   // insert into zoos () values ()
-  db('zoos')
-  .insert(req.body, 'id')
-  .then(ids => {
+  if(!req.body.name) {
+    res.status(400).json({ message: 'please provide a name' })
+  } else {
     db('zoos')
-      .where({ id: ids[0] })
-      .first()
-      .then(zoo =>{
-        res.status(200).json(zoo);
-      })
-      .catch(err => {
-        res.status(500).json(err);
-      });
-  })
-  .catch(err => {
-    res.status(500).json(err);
-  });
+    .insert(req.body, 'id')
+    .then(ids => {
+      db('zoos')
+        .where({ id: ids[0] })
+        .first()
+        .then(zoo =>{
+          res.status(200).json(zoo);
+        })
+        .catch(err => {
+          res.status(500).json(err);
+        });
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    });
+  }
 });
 
 //update
 server.put('/api/zoos/:id', (req, res) => {
+  if(!req.body.name){
+    res.status(400).json({ message: 'Please provide a name' })
+  } else {
   db('zoos')
     .where({ id: req.params.id })
     .update(req.body)
@@ -86,6 +93,7 @@ server.put('/api/zoos/:id', (req, res) => {
     .catch(err => {
       res.status(500).json(err);
     })
+  } 
 })
 
 //delete
